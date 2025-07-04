@@ -1,13 +1,29 @@
-function DeviceWidget({ name, status, value, onToggle }) {
+interface Props {
+  name: string;
+  status?: boolean;
+  value?: number | string;
+  onToggle: () => void;
+  onRemove: () => void;
+}
+
+const DeviceWidget = (props: Props) => {
   return (
-    <div style={{ border: '1px solid #ccc', padding: '10px', margin: '10px' }}>
-      <h3>{name}</h3>
-      {status !== undefined ? (
-        <p>Status: {status ? 'On' : 'Off'}</p>
+    <div className='border-1 rounded-lg m-2.5 p-2.5 bg-gray-50'>
+      <h3 className='text-lg'>{props.name}</h3>
+      {props.status !== undefined ? (
+        <p>
+          Status: {props.status ? 
+            <span className='text-green-900'>On</span> : 
+            <span className='text-red-900'>Off</span> 
+          }
+        </p>
       ) : (
-        <p>Value: {value}°C</p>
+        <p>Value: {props.value}°C</p>
       )}
-      {status !== undefined && <button onClick={onToggle}>Toggle</button>}
+      <div className="flex gap-1.5">
+        {props.status !== undefined && <button className='base-button' onClick={props.onToggle}>Toggle</button>}
+        <button className='base-button' onClick={props.onRemove}>Remove</button>
+      </div>
     </div>
   );
 }
