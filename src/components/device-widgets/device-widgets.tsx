@@ -8,7 +8,7 @@ interface Props {
 
 const DeviceWidget = (props: Props) => {
   return (
-    <div className='border-1 rounded-lg m-2.5 p-2.5 bg-gray-50'>
+    <div className='border-1 rounded-lg p-2.5 bg-gray-50'>
       <h3 className='text-lg'>{props.name}</h3>
       {props.status !== undefined ? (
         <p>
@@ -20,7 +20,7 @@ const DeviceWidget = (props: Props) => {
       ) : (
         <p>Value: {props.value}°C</p>
       )}
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 mt-3">
         {props.status !== undefined && <button className='base-button' onClick={props.onToggle}>Toggle</button>}
         <button className='base-button' onClick={props.onRemove}>Remove</button>
       </div>
