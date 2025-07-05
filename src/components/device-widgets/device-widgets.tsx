@@ -1,3 +1,6 @@
+import { useEffect, useRef, forwardRef } from "react";
+import { gsap } from 'gsap';
+
 interface Props {
   name: string;
   status?: boolean;
@@ -6,9 +9,23 @@ interface Props {
   onRemove: () => void;
 }
 
-const DeviceWidget = (props: Props) => {
+const DeviceWidget = (props: Props, ref) => {
+  const buttonRef = useRef(null);
+  useEffect(() => {
+    gsap.to(buttonRef.current, {
+      scale: 1.1,
+      duration: 0.2,
+      paused: true,
+      ease: 'power1.inOut',
+    });
+  }, []);
   return (
-    <div className='border-1 rounded-lg p-2.5 bg-gray-50'>
+    <div 
+      className='border-1 rounded-lg p-2.5 bg-gray-50 relative will-change-transform' 
+      ref={ref}
+      onMouseEnter={() => gsap.to(buttonRef.current, { scale: 1.1 })}
+      onMouseLeave={() => gsap.to(buttonRef.current, { scale: 1 })}
+    >
       <h3 className='text-lg'>{props.name}</h3>
       {props.status !== undefined ? (
         <p>
@@ -21,10 +38,23 @@ const DeviceWidget = (props: Props) => {
         <p>Value: {props.value}°C</p>
       )}
       <div className="flex gap-1.5 mt-3">
-        {props.status !== undefined && <button className='base-button' onClick={props.onToggle}>Toggle</button>}
-        <button className='base-button' onClick={props.onRemove}>Remove</button>
+        {props.status !== undefined && 
+          <button 
+            className='base-button' 
+            onClick={props.onToggle}
+            ref={buttonRef}
+          >
+            Toggle
+          </button>
+        }
+        <button 
+          className='base-button' 
+          onClick={props.onRemove}
+        >
+          Remove
+        </button>
       </div>
     </div>
   );
 }
-export default DeviceWidget;
+export default forwardRef(DeviceWidget);
