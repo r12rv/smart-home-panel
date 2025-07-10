@@ -1,78 +1,16 @@
-import { ReactNode, useEffect, useState } from 'react';
-import DeviceWidget from './components/device-widgets/device-widgets';
-import { Device } from './types/device';
-import { useQuery } from '@tanstack/react-query';
-import { gsap } from 'gsap';
+import { useEffect, useState } from "react";
+import Home from "./pages/home";
+import { auth } from './firebase';
+import { onAuthStateChanged } from "firebase/auth";
+import Login from "./components/login/login";
 
-function App() {
-  const [devices, setDevices] = useState<Array<Device>>([]);
-  const [widgetRefs, setWidgetRefs] = useState<ReactNode[]>([])
-  const { data } = useQuery({
-    queryKey: ['devices'],
-    queryFn: async () => {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users');
-      if (!res.ok) throw new Error('Failed to fetch');
-      return res.json();
-    },
-  });
+const App = () => {
+  const [user, setUser] = useState<any>(null);
   useEffect(() => {
-    if (data) {
-      setDevices(data.map(device => ({
-        ...device,
-        status: false,
-        value: 22,
-      })));
-    }
-  }, [data]);
-  const addToRefs = (el: ReactNode) => {
-    if (el && !widgetRefs.includes(el)) {
-      setWidgetRefs((prev) => [...prev, el]);
-    }
-  };
-  useEffect(() => {
-    const validRefs = widgetRefs.filter((ref) => ref instanceof Element);
-    if (validRefs.length > 0) {
-      gsap.timeline().to(validRefs, {
-        x: -36,
-        duration: 0.5,
-        stagger: {
-          each: 0.06,
-          from: 'start',
-        },
-        ease: 'power2.out',
-      });
-    }
-  }, [widgetRefs]);
-  const toggleDevice = (id: number) => {
-    const newDevices = devices.map(device =>
-      device.id === id
-        ? { ...device, status: !device.status }
-        : device
-    );
-    setDevices(newDevices)
-  };
-
-  const removeDevice = (id) => {
-    setDevices(devices.filter(device => device.id !== id));
-  };
-
-  return (
-    <div className='m-2 flex flex-col'>
-      <h1 className='text-2xl pb-3'>Smart Home Control Panel</h1>
-      <div className='flex flex-col gap-4.5 ml-9'>
-        {devices.map(device => (
-          <DeviceWidget
-            key={device.id}
-            name={device.name}
-            status={device.status}
-            value={device.value}
-            onToggle={() => toggleDevice(device.id)}
-            onRemove={() => removeDevice(device.id)}
-            ref={addToRefs}
-          />
-        ))}
-      </div>
-    </div>
-  );
+    onAuthStateChanged(auth, (user: any) => setUser(user));
+  }, []);
+  if (!user) return <Login onLogin={() => setUser(auth.currentUser)} />;
+  return <Home/>
 }
+
 export default App;

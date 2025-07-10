@@ -21,7 +21,7 @@ const DeviceWidget = (props: Props, ref) => {
   }, []);
   return (
     <div 
-      className='border-1 rounded-lg p-2.5 bg-gray-50 relative will-change-transform' 
+      className='border-1 border-[#0e6961] rounded-lg p-2.5 bg-[#1A1A2E] relative will-change-transform max-w-54' 
       ref={ref}
       onMouseEnter={() => gsap.to(buttonRef.current, { scale: 1.1 })}
       onMouseLeave={() => gsap.to(buttonRef.current, { scale: 1 })}
