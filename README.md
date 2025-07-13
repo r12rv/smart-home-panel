@@ -1,1 +1,1 @@
-# React + Vite + Tailwind + React Query + GSAP
+# React + Vite + Tailwind + React Query + GSAP + Forebase
