@@ -3,4 +3,4 @@ export type Device = {
   name: string;
   status?: boolean;
   value?: number | string;
-}
+};

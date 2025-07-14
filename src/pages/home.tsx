@@ -1,44 +1,46 @@
-import { useEffect, useState } from 'react';
-import DeviceWidget from '../components/device-widget/device-widget';
-import { Device } from '../types/device';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from "react";
+import DeviceWidget from "../components/device-widget/device-widget";
+import { Device } from "../types/device";
+import { useQuery } from "@tanstack/react-query";
+import usePreferredColorScheme from "../hooks/theme";
 
 const Home = () => {
   const [devices, setDevices] = useState<Array<Device>>([]);
   const { data } = useQuery({
-    queryKey: ['devices'],
+    queryKey: ["devices"],
     queryFn: async () => {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users');
-      if (!res.ok) throw new Error('Failed to fetch');
+      const res = await fetch("https://jsonplaceholder.typicode.com/users");
+      if (!res.ok) throw new Error("Failed to fetch");
       return res.json();
     },
   });
   useEffect(() => {
     if (data) {
-      setDevices(data.map(device => ({
-        ...device,
-        status: false,
-        value: 22,
-      })));
+      setDevices(
+        data.map((device) => ({
+          ...device,
+          status: false,
+          value: 22,
+        })),
+      );
     }
   }, [data]);
   const toggleDevice = (id: number) => {
-    const newDevices = devices.map(device =>
-      device.id === id
-        ? { ...device, status: !device.status }
-        : device
+    const newDevices = devices.map((device) =>
+      device.id === id ? { ...device, status: !device.status } : device,
     );
-    setDevices(newDevices)
+    setDevices(newDevices);
   };
 
   const removeDevice = (id) => {
-    setDevices(devices.filter(device => device.id !== id));
+    setDevices(devices.filter((device) => device.id !== id));
   };
 
   return (
-    <div className='h-full w-full flex-grow p-2 flex flex-col text-white dark-theme'>
-      <h1 className='text-2xl pb-3'>Smart Home Control Panel</h1>
-      <div className='flex flex-wrap gap-4.5'>
+    <div className="flex flex-col flex-grow p-6">
+      {/* // <div className='h-full w-full flex-grow p-2 flex flex-col font-xl text-text-title'> */}
+      <h1 className="pb-3">Smart Home Control Panel</h1>
+      <div className="flex flex-wrap gap-4.5 font-l">
         {devices.map((device) => (
           <DeviceWidget
             key={device.id}
@@ -52,5 +54,5 @@ const Home = () => {
       </div>
     </div>
   );
-}
+};
 export default Home;
