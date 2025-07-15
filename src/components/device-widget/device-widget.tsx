@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { THEME_DARK } from "../../consts/themes";
 
 interface Props {
   name: string;
@@ -10,23 +11,49 @@ interface Props {
 }
 
 const DeviceWidget = (props: Props) => {
-  const buttonRef = useRef(null);
-  const widgetRef = useRef(null);
+  const widgetRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [theme, setTheme] = useState(
+    () => document.documentElement.getAttribute("data-theme") || "emerald",
+  );
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const newTheme = document.documentElement.getAttribute("data-theme");
+      if (newTheme && newTheme !== theme) {
+        setTheme(newTheme);
+      }
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => observer.disconnect();
+  }, [theme]);
   useEffect(() => {
     if (!widgetRef.current) return;
+    const highlightColor = theme === THEME_DARK ? "#304137" : "#8dd5ae";
+    const insetColor = theme === THEME_DARK ? "#1b1717" : "transparent";
     gsap.to(widgetRef.current, {
       boxShadow: props.status
-        ? 'inset 25px 25px 100px #8dd5ae'
-        : 'inset 0px 0px 0px transparent',
+        ? `inset 25px 25px 100px ${highlightColor}`
+        : `inset 0px 0px 0px ${insetColor}`,
       duration: 1,
-      ease: 'power2.inOut',
+      ease: "power2.inOut",
     });
   }, [props.status]);
+  useEffect(() => {
+    if (!widgetRef.current) return;
+    const highlightColor = theme === THEME_DARK ? "#304137" : "#8dd5ae";
+    const insetColor = theme === THEME_DARK ? "#1b1717" : "transparent";
+    gsap.set(widgetRef.current, {
+      boxShadow: props.status
+        ? `inset 25px 25px 100px ${highlightColor}`
+        : `inset 0px 0px 0px ${insetColor}`,
+    });
+  }, [theme]);
+
   return (
-    <div
-      className="card w-96 bg-base-100 card-xs shadow-sm"
-      ref={widgetRef}
-    >
+    <div className="card w-96 bg-base-100 card-xs shadow-sm" ref={widgetRef}>
       <div className="card-body">
         <h2 className="card-title">{props.name}</h2>
         <div className="font-s">

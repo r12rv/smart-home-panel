@@ -3,12 +3,12 @@ import Home from "./pages/home";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import Login from "./components/login/login";
-import usePreferredColorScheme from "./hooks/theme";
+import useSystemTheme from "./hooks/theme";
 
 const App = () => {
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const isDarkMode = usePreferredColorScheme();
+  useSystemTheme();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user: any) => {
       setUser(user);
