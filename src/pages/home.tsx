@@ -2,18 +2,11 @@ import { useEffect, useState } from "react";
 import DeviceWidget from "../components/device-widget/device-widget";
 import { Device } from "../types/device";
 import { useQuery } from "@tanstack/react-query";
-import { THEME_DARK, THEME_LIGHT } from "../consts/themes";
+import { useThemeContext } from "../providers/theme-provider";
 
 const Home = () => {
+  const { toggleTheme } = useThemeContext()
   const [devices, setDevices] = useState<Array<Device>>([]);
-  const [isDark, setIsDark] = useState(
-    document.documentElement.getAttribute("data-theme") === THEME_DARK,
-  );
-  const toggleTheme = () => {
-    const newTheme = isDark ? THEME_LIGHT : THEME_DARK;
-    document.documentElement.setAttribute("data-theme", newTheme);
-    setIsDark(!isDark);
-  };
   const { data } = useQuery({
     queryKey: ["devices"],
     queryFn: async () => {
@@ -51,7 +44,7 @@ const Home = () => {
             type="checkbox"
             className="theme-controller"
             value=""
-            onChange={toggleTheme}
+            onChange={() => toggleTheme()}
           />
           <svg
             className="swap-off h-10 w-10 fill-current"

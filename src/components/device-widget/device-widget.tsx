@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { THEME_DARK } from "../../consts/themes";
+import { useThemeContext } from "../../providers/theme-provider";
 
 interface Props {
   name: string;
@@ -11,24 +12,9 @@ interface Props {
 }
 
 const DeviceWidget = (props: Props) => {
+  const { theme } = useThemeContext()
   const widgetRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const [theme, setTheme] = useState(
-    () => document.documentElement.getAttribute("data-theme") || "emerald",
-  );
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      const newTheme = document.documentElement.getAttribute("data-theme");
-      if (newTheme && newTheme !== theme) {
-        setTheme(newTheme);
-      }
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
-    return () => observer.disconnect();
-  }, [theme]);
   useEffect(() => {
     if (!widgetRef.current) return;
     const highlightColor = theme === THEME_DARK ? "#304137" : "#8dd5ae";
@@ -37,7 +23,7 @@ const DeviceWidget = (props: Props) => {
       boxShadow: props.status
         ? `inset 25px 25px 100px ${highlightColor}`
         : `inset 0px 0px 0px ${insetColor}`,
-      duration: 1,
+      duration: 0.5,
       ease: "power2.inOut",
     });
   }, [props.status]);

@@ -1,9 +1,7 @@
 import { createContext, useContext } from "react";
-import ThemeContext from "./contexts/theme";
-import AuthContext from "./contexts/auth";
+import AuthContext from "../contexts/auth";
 
 export interface ICommonStore {
-  themeStore: ThemeContext;
   authStore: AuthContext;
 }
 
