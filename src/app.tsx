@@ -3,7 +3,10 @@ import Home from "./pages/home";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import Login from "./components/login/login";
-import { HomePageContextProvider, ICommonStore } from "./providers/app-provider";
+import {
+  HomePageContextProvider,
+  ICommonStore,
+} from "./providers/app-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Loader from "./components/loader/loader";
 import AuthContext from "./contexts/auth";

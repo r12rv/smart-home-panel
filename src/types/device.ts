@@ -1,6 +1,10 @@
-export type Device = {
+export type LocalDevice = {
   id: number;
+} & CreatedDevice;
+
+export type CreatedDevice = {
   name: string;
-  status?: boolean;
+  room: string,
+  status: boolean;
   value?: number | string;
-};
+}

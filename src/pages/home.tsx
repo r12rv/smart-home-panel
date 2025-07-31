@@ -1,44 +1,55 @@
 import { useEffect, useState } from "react";
 import DeviceWidget from "../components/device-widget/device-widget";
-import { Device } from "../types/device";
-import { useQuery } from "@tanstack/react-query";
 import { useThemeContext } from "../providers/theme-provider";
+import {
+  useAddDevice,
+  useDevices,
+  useRemoveDevice,
+  useToggleDevice,
+} from "../api/device-api";
+import { CreatedDevice, LocalDevice } from "../types/device";
+import AddButton from "../components/add-button/add-button";
 
 const Home = () => {
-  const { toggleTheme } = useThemeContext()
-  const [devices, setDevices] = useState<Array<Device>>([]);
-  const { data } = useQuery({
-    queryKey: ["devices"],
-    queryFn: async () => {
-      const res = await fetch("https://jsonplaceholder.typicode.com/users");
-      if (!res.ok) throw new Error("Failed to fetch");
-      return res.json();
-    },
-  });
+  const { toggleTheme } = useThemeContext();
+  const { data } = useDevices();
+  const toggleMutation = useToggleDevice();
+  const removeMutation = useRemoveDevice();
+  const addMutation = useAddDevice()
+  const [devices, setDevices] = useState<LocalDevice[]>([]);
   useEffect(() => {
     if (data) {
       setDevices(
-        data.map((device) => ({
-          ...device,
-          status: false,
-          value: 22,
-        })),
+        data.map((d: any) => ({
+          id: d.id,
+          name: d.name ?? "",
+          room: d.room ?? "",
+          status: d.status ?? false,
+          value: d.value ?? undefined
+        }))
       );
     }
   }, [data]);
   const toggleDevice = (id: number) => {
-    const newDevices = devices.map((device) =>
-      device.id === id ? { ...device, status: !device.status } : device,
-    );
-    setDevices(newDevices);
+    const device = devices.find((d: LocalDevice) => d.id === id);
+    if (device) {
+      toggleMutation.mutate({ id, status: !device.status });
+    }
   };
   const removeDevice = (id) => {
-    setDevices(devices.filter((device) => device.id !== id));
+    removeMutation.mutate(id);
   };
+  const addDevice = (device: CreatedDevice) => {
+    addMutation.mutate(device)
+  }
+
   return (
     <div className="flex flex-col flex-grow p-6">
-      <div className="flex justify-between">
-        <h1 className="pb-3">Smart Home Control Panel</h1>
+      <div className="flex justify-between items-center pb-9">
+        <h1 className="text-2xl font-semibold flex gap-3">
+          Smart Home
+          <AddButton onAdd={() => addDevice({name: "Thermostat", room: "Living Room", status: true, value: 20})}/>
+        </h1>
         <label className="swap swap-rotate">
           <input
             type="checkbox"
@@ -63,12 +74,10 @@ const Home = () => {
         </label>
       </div>
       <div className="flex flex-wrap gap-4.5 font-l">
-        {devices.map((device) => (
+        {devices.map((device: LocalDevice) => (
           <DeviceWidget
             key={device.id}
-            name={device.name}
-            status={device.status}
-            value={device.value}
+            device={device}
             onToggle={() => toggleDevice(device.id)}
             onRemove={() => removeDevice(device.id)}
           />
@@ -77,4 +86,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
